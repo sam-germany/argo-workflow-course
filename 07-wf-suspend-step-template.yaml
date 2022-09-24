@@ -1,0 +1,29 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: wf-suspend-step-template-
+spec:
+  entrypoint: steps-template-suspend-22
+  templates:
+    - name: steps-template-suspend-22
+      steps:
+      - - name: step1
+          template: task-template-22
+      - - name: step2
+          template: task-template-22
+        - name: step3
+          template: task-template-22
+      - - name: step4-delay            # this sept we put only to putting delay before executing the last step
+          template: delay-template-22
+      - - name: step5
+          template: task-template-22
+    - name: task-template-22
+      script:
+        image: python:3.8-slim
+        command: [python]
+        source: |
+          print("task executed --- ww2222 ")
+
+    - name: delay-template-22
+      suspend:
+        duration: "10s"

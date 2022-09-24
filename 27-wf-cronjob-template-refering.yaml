@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: CronWorkflow
+metadata:
+  generateName: wf-dag-cron-workflow-
+spec:
+  schedule: "0 2 * * *"
+  concurrencyPolicy: "Allow"               # <-- we can put  "Allow", "Forbid", "Replace"
+  startingDeadlineSeconds: 70
+  workflowSpec:                        #<-- here we are defining the workflow will execute under this Cronjob
+    workflowTemplateRef:
+      name: <any-already-created-template-name>   #<-- here we have to put a name of already created template
+                                                       # main point it we are not defining a workflow here
+                                                       # we are refering to a template

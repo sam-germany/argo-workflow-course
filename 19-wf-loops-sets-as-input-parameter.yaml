@@ -1,0 +1,69 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: wf-loop-sets-input-parameter-
+spec:
+  entrypoint: dag-template
+  arguments:
+    parameters:
+    - name: message1
+      value: Task 1 is executed
+    - name: message2
+      value: Task 2 is executed
+    - name: ingest-list
+      value: |
+        [
+          { "extractor22" : "PythonExtractor", "table22" : "Table 1"},
+          { "extractor22": "PySparkExtractor", "table22" : "Table 2"},
+          { "extractor22": "DaskExtractor", "table22" : "Table 3"}
+        ]
+  templates:
+  - name: dag-template
+    inputs:
+      parameters:
+      - name: message1
+      - name: message2
+      - name: ingest-list
+    dag:
+      tasks:
+      - name: Task1
+        arguments:
+          parameters: [{name: text, value: "{{inputs.parameters.message1}}" }]
+        template: task-template
+      - name: Task2
+        arguments:
+          parameters: [{name: text, value: "{{inputs.parameters.message2}}" }]
+        template: task-template
+      - name: Task3
+        dependencies: [Task1]
+        template: task-loop-set
+        arguments:
+          parameters: 
+          - name: extractor33
+            value: "{{item.extractor22}}"
+          - name: table33
+            value: "{{item.table22}}"
+        withParam: "{{inputs.parameters.ingest-list}}"
+
+        
+  - name: task-template
+    inputs:
+      parameters:
+      - name: text
+    script:
+      image: python:3.8-slim
+      command: [python]
+      source: |
+        p = "{{inputs.parameters.text}}"
+        print(p)
+
+  - name: task-loop-set
+    inputs:
+      parameters:
+      - name: extractor33
+      - name: table33
+    script:
+      image: python:3.8-slim
+      command: [python]
+      source: |
+        print("Applying ", "{{inputs.parameters.extractor33}}", "to the table ", "{{inputs.parameters.table33}}")

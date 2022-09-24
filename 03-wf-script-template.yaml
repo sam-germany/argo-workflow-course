@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: wf-script-template-
+spec:
+  entrypoint: script-template  # it means if their are many template then start with the given template
+  templates:
+  - name:  script-template
+    script:                  # <-- to run a script, we need to use "script" keyword
+      image: python:3.8-slim
+      command: [python]
+      source: |
+        print("This script template was executed successfully")          

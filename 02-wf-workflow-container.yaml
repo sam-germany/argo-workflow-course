@@ -1,0 +1,11 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: wf-container-template- 
+spec: 
+  entrypoint: container-template          # it means their can be many template but start first with "container-template"
+  templates:
+  - name: container-template
+    container:                            # <-- to create a container we need to use "container" keyword
+      image: python:3.8-slim
+      command: [echo, "The container template was executed successfully"]

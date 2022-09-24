@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  generateName: wf-steps-templates-parallel-
+spec:
+  entrypoint: steps-template-serial-22
+  templates:
+    - name: steps-template-serial-22
+      steps:
+      - - name: step1
+          template: task-template-22
+      - - name: step2
+          template: task-template-22
+        - name: step3                 # in "steps" when we put a step with onyl one "- name" then it will
+          template: task-template-22     # be executed parallel to the above defined step, in this case step 2-3 run parallely
+      - - name: step4
+          template: task-template-22
+    - name: task-template-22
+      script:
+        image: python:3.8-slim
+        command: [python]
+        source: |
+          print("task executed --- ww2222 ")

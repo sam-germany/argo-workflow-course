@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: wf-steps-templates-serial
+spec:
+  entrypoint: steps-template-serial-22
+  templates:
+    - name: steps-template-serial-22
+      steps:                             # <-- to define Steps we need "steps" keyword
+      - - name: step1                    # we need "- - name" to give a step name
+          template: task-template-22     # here we can define what this step will do
+      - - name: step2
+          template: task-template-22
+      - - name: step3
+          template: task-template-22
+    - name: task-template-22
+      script:
+        image: python:3.8-slim
+        command: [python]
+        source: |
+          print("task executed --- ww2222 ")
